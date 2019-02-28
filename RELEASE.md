@@ -1,3 +1,13 @@
+# 0.397.6
+## [Ktools](https://github.com/OasisLMF/ktools/tree/v3.0.6)
+* Ktools *3.0.6* packaged in `0.397.6` worker image 
+
+
+# 0.397.5
+## [Ktools](https://github.com/OasisLMF/ktools/tree/v3.0.5)
+* Ktools *3.0.5* packaged in `0.397.5` worker image 
+
+
 # 0.397.4
 
 ## [OasisLMF](https://github.com/OasisLMF/OasisLMF/tree/1.2.7)
