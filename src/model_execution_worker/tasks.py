@@ -168,8 +168,13 @@ def start_analysis(analysis_settings, input_location):
     directory_name = "{}_{}_{}".format(source_tag, analysis_tag, uuid.uuid4().hex)
     working_directory = os.path.join(settings.get('worker', 'WORKING_DIRECTORY'), directory_name)
 
-    prepare_model_run_directory(working_directory, model_data_src_path=model_data_path, inputs_archive=input_archive)
-    prepare_model_run_inputs(analysis_settings['analysis_settings'], working_directory)
+    if 'ri_output' in analysis_settings['analysis_settings'].keys():
+        ri = analysis_settings['analysis_settings']['ri_output']
+    else:
+        ri = False
+
+    prepare_model_run_directory(working_directory, ri=ri, model_data_src_path=model_data_path, inputs_archive=input_archive)
+    prepare_model_run_inputs(analysis_settings['analysis_settings'], working_directory, ri=ri)
 
     with setcwd(working_directory):
         logging.info("Working directory = {}".format(working_directory))
@@ -186,14 +191,15 @@ def start_analysis(analysis_settings, input_location):
 
         ##! to add check that RI directories take the form of RI_{ID} amd ID is a monotonic index
 
-        num_reinsurance_iterations = len(glob.glob(os.path.join("input", 'RI_[0-9]')))
+        num_reinsurance_iterations = len(glob.glob('RI_[0-9]'))
 
         model_runner_module.run(
             analysis_settings['analysis_settings'], 
             settings.getint('worker', 'KTOOLS_BATCH_COUNT'), 
             num_reinsurance_iterations=num_reinsurance_iterations,
             ktools_mem_limit=settings.getboolean('worker', 'KTOOLS_MEMORY_LIMIT'),
-            set_alloc_rule=settings.getint('worker', 'KTOOLS_ALLOC_RULE')
+            set_alloc_rule=settings.getint('worker', 'KTOOLS_ALLOC_RULE'),
+            fifo_tmp_dir=False
         )
 
         output_location = uuid.uuid4().hex
